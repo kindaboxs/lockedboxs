@@ -1,17 +1,20 @@
 "use client";
 
 import { useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -25,10 +28,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signUp } from "@/lib/auth/client";
+import { cn } from "@/lib/utils";
 import { signUpSchema, type SignUpSchemaType } from "@/models/auth/schemas";
 
 export const SignUpView = () => {
 	const [pending, startTransition] = useTransition();
+
+	const router = useRouter();
 
 	const form = useForm<SignUpSchemaType>({
 		resolver: zodResolver(signUpSchema),
@@ -50,9 +56,10 @@ export const SignUpView = () => {
 					onSuccess: () => {
 						toast.success("Sign Up successful", {
 							id: "sign-up-success",
-							description: "Your account has been created",
+							description: "Your account has been created, please sign in",
 						});
 						form.reset();
+						router.push("/sign-in");
 					},
 					onError: (ctx) => {
 						toast.error("Sign Up failed", {
@@ -151,6 +158,17 @@ export const SignUpView = () => {
 					</form>
 				</Form>
 			</CardContent>
+			<CardFooter className="flex w-full justify-center gap-2 text-center">
+				<p className="text-muted-foreground text-sm">
+					Already have an account?
+				</p>
+				<Link
+					href="/sign-in"
+					className={cn(buttonVariants({ variant: "link", size: "sm" }), "p-0")}
+				>
+					Sign In
+				</Link>
+			</CardFooter>
 		</Card>
 	);
 };

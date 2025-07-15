@@ -1,17 +1,20 @@
 "use client";
 
 import { useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
@@ -25,10 +28,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth/client";
+import { cn } from "@/lib/utils";
 import { signInSchema, type SignInSchemaType } from "@/models/auth/schemas";
 
 export const SignInView = () => {
 	const [pending, startTransition] = useTransition();
+
+	const router = useRouter();
 
 	const form = useForm<SignInSchemaType>({
 		resolver: zodResolver(signInSchema),
@@ -51,6 +57,7 @@ export const SignInView = () => {
 							description: "You have been signed in",
 						});
 						form.reset();
+						router.push("/");
 					},
 					onError: (ctx) => {
 						toast.error("Sign In failed", {
@@ -135,6 +142,17 @@ export const SignInView = () => {
 					</form>
 				</Form>
 			</CardContent>
+			<CardFooter className="flex w-full justify-center gap-2 text-center">
+				<p className="text-muted-foreground text-sm">
+					Don&apos;t have an account?
+				</p>
+				<Link
+					href="/sign-up"
+					className={cn(buttonVariants({ variant: "link", size: "sm" }), "p-0")}
+				>
+					Sign Up
+				</Link>
+			</CardFooter>
 		</Card>
 	);
 };
